@@ -1,4 +1,4 @@
-select * \
+select distinct p1.pnum, p1.lastname \
 from professor as p1, class as c1, enrollment as e1 \
 where p1.dept = 'CS' \
 and p1.pnum = c1.pnum \

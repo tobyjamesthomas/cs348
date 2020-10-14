@@ -67,6 +67,7 @@ insert into class values ('CS348', 'S2020', 3, 2)
 insert into class values ('CS348', 'S2020', 4, 3)
 
 insert into class values ('CS234', 'S2020', 1, 4)
+insert into class values ('CS234', 'S2020', 2, 2)
 
 insert into class values ('SE380', 'F2018', 1, 1)
 insert into class values ('SE380', 'F2018', 2, 1)
@@ -114,6 +115,7 @@ insert into enrollment values (2, 'CS348', 'F2019', 1, 91)
 insert into enrollment values (2, 'CS348', 'W2019', 1, 87)
 
 insert into enrollment values (1, 'CS348', 'S2020', 3, null)
+insert into enrollment values (1, 'CS234', 'S2020', 2, null)
 
 insert into enrollment values (3, 'CS234', 'S2020', 1, null)
 insert into enrollment values (3, 'CS348', 'S2020', 4, null)
