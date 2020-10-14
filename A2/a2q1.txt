@@ -1,0 +1,21 @@
+select distinct snum, s1.firstname \
+from ( \
+    select student.snum, firstname, cnum, term \
+    from student, enrollment \
+    where student.snum = enrollment.snum \
+    and year >= 2 \
+    and substring(cnum, 3, 1) = (year - 1) \
+    and grade > 90 \
+) as s1, ( \
+    select firstname, cnum, term \
+    from student, enrollment \
+    where student.snum = enrollment.snum \
+    and year >= 2 \
+    and substring(cnum, 3, 1) = (year - 1) \
+    and grade > 90 \
+) as s2 \
+where s1.firstname = s2.firstname \
+and ( \
+    s1.term != s2.term \
+    or s1.cnum != s2.cnum \
+)

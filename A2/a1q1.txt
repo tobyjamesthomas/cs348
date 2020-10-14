@@ -1,3 +1,0 @@
-select snum, firstname, year \
-from student \
-where year >= 2
