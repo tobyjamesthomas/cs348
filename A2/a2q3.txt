@@ -1,7 +1,16 @@
-select * \
+select distinct snum, firstname, year \
 from ( \
     select grade \
     from enrollment \
-    where cnum = 'CS348' \
+    where cnum = 'CS240' \
     and grade is not null \
-)
+    order by grade desc \
+    limit 1 \
+) as g, ( \
+    select student.snum, firstname, year, grade \
+    from student, enrollment \
+    where student.snum = enrollment.snum \
+    and cnum = 'CS240' \
+    and grade is not null \
+) as s \
+where g.grade - s.grade <= 3

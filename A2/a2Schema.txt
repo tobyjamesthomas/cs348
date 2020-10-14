@@ -42,6 +42,7 @@ create table course ( \
    cname     varchar(50) not null, \
    primary key (cnum))
 
+insert into course values ('CS240', 'Intro to Blah')
 insert into course values ('CS348', 'Intro to Databases')
 insert into course values ('CS234', 'Intro to Something CS')
 insert into course values ('SE380', 'Feedback')
@@ -54,6 +55,8 @@ create table class ( \
    primary key (cnum,term,section), \
    foreign key (cnum) references course(cnum), \
    foreign key (pnum) references professor(pnum))
+
+insert into class values ('CS240', 'F2019', 1, 1)
 
 insert into class values ('CS348', 'F2018', 1, 1)
 insert into class values ('CS348', 'F2018', 2, 1)
@@ -101,6 +104,8 @@ create table enrollment ( \
    foreign key (snum) references student(snum), \
    foreign key (cnum,term,section) references class(cnum,term,section))
 
+insert into enrollment values (1, 'CS240', 'F2019', 1, 99)
+
 insert into enrollment values (1, 'CS348', 'F2018', 1, 88)
 insert into enrollment values (1, 'CS348', 'W2019', 1, 90)
 insert into enrollment values (1, 'CS348', 'S2019', 1, 98)
@@ -112,10 +117,11 @@ insert into enrollment values (2, 'SE380', 'F2018', 1, 90)
 insert into enrollment values (2, 'SE380', 'W2019', 1, 88)
 insert into enrollment values (2, 'CS348', 'S2019', 1, 85)
 insert into enrollment values (2, 'CS348', 'F2019', 1, 91)
-insert into enrollment values (2, 'CS348', 'W2019', 1, 87)
+insert into enrollment values (2, 'CS348', 'W2019', 1, 97)
 
 insert into enrollment values (1, 'CS348', 'S2020', 3, null)
 insert into enrollment values (1, 'CS234', 'S2020', 2, null)
 
+insert into enrollment values (3, 'CS348', 'F2019', 1, 99)
 insert into enrollment values (3, 'CS234', 'S2020', 1, null)
 insert into enrollment values (3, 'CS348', 'S2020', 4, null)
