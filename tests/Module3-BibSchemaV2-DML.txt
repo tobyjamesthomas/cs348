@@ -1,0 +1,164 @@
+-- Unit 1 DML
+
+select distinct * \
+from publication
+
+select distinct r1.publication \
+from wrote r1, wrote r2 \
+where r1.publication = r2.publication \
+and r1.author != r2.author
+
+select distinct title \
+from publication, book \
+where publication.pubid = book.pubid
+
+select distinct pubid, endpage-startpage+1 \
+from article
+
+select distinct pubid as id, \
+       endpage-startpage+1 as numberofpages \
+from article
+
+select * from journal where year >= 1997
+
+select * from article \
+where endpage-startpage > 4
+
+select distinct r1.publication \
+from wrote r1, wrote r2 \
+where r1.publication = r2.publication \
+and not r1.author = r2.author
+
+-- Unit 2 DML
+
+(select distinct pubid from book) \
+union \
+(select distinct pubid from journal)
+
+(select distinct pubid from publication) \
+except \
+(select distinct pubid from article)
+
+with bookorjournal (pubid) as ( \
+     (select distinct pubid from book) \
+     union \
+     (select distinct pubid from journal) ) \
+select distinct title \
+from publication, bookorjournal \
+where publication.pubid = bookorjournal.pubid
+
+select distinct title \
+from publication, ( \
+     (select distinct pubid from book) \
+     union \
+     (select distinct pubid from journal) ) as jb \
+where publication.pubid = jb.pubid
+
+-- Unit 3 DML
+
+select distinct title \
+from publication \
+where pubid in (select pubid from article)
+
+select * from wrote \
+where publication not in ( \
+     (select pubid from book) \
+     union \
+     (select pubid from journal) )
+
+select * from wrote \
+where publication not in ( \
+      select pubid from book ) \
+and publication not in ( \
+      select pubid from journal )
+
+select distinct pubid \
+from article \
+where endpage-startpage >= all ( \
+     select endpage - startpage \
+     from article )
+
+select * from wrote r \
+where exists ( select * \ 
+     from wrote s \
+     where r.publication = s.publication \
+     and r.author <> s.author )
+
+select * from wrote r \
+where not exists ( select * \
+     from wrote s \
+     where r.publication = s.publication \
+     and r.author <> s.author )
+
+select * from wrote r \
+where publication in ( \
+     select publication \
+     from wrote s \
+     where r.author <> s.author )
+
+select distinct a1.name \
+from author a1, author a2 \
+where not exists ( \
+     select *  \
+     from publication p, wrote w1 \
+     where p.pubid = w1.publication \
+     and a1.aid = w1.author \
+     and a2.aid not in ( \
+          select author from wrote \
+          where publication = p.pubid \
+          and author <> a1.aid ) )
+
+-- Unit 4 DML
+
+select publication, count(author) \
+from wrote \
+group by publication
+
+select author, sum(endpage-startpage+1) as pcnt \
+from wrote, article \
+where publication = pubid \
+group by author
+
+select publication, count(author) as acnt \
+from wrote \
+group by publication \
+having count(author) > 1
+
+select distinct aid, name, count(publication) as pubcnt \
+from author, ( \
+     ( select distinct author, publication  \
+       from wrote, book  \
+       where publication = pubid ) \
+     union \
+     ( select distinct author, publication \
+       from wrote, article \
+       where publication = pubid ) ) ba \
+where aid = ba.author \
+group by aid, name
+
+-- Unit 5 DML
+
+insert into author (aid, name) \
+values (4, 'Martha')
+
+select distinct aid, name from author
+
+insert into author ( \
+     select max(aid) + 1, 'Tim' \
+     from author )
+
+select distinct aid, name from author
+
+delete from author \
+where not exists ( select * from wrote \
+                   where author = aid )
+
+select distinct aid, name from author
+
+update author \
+set name = 'Susan' \
+where aid in ( \
+     select aid from author \
+     where name = 'Sue' )
+
+select distinct aid, name from author

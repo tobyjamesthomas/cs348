@@ -1,0 +1,86 @@
+connect to cs348
+
+drop table WROTE
+drop table AUTHOR
+drop table ARTICLE
+drop table PROCEEDINGS
+drop table JOURNAL
+drop table JOURNAL_OR_PROCEEDINGS
+drop table BOOK
+drop table PUBLICATION
+
+create table AUTHOR ( \
+	aid		integer not null, \
+	name		varchar (10) not null, \
+	primary key (aid) )
+
+insert into AUTHOR values ( 1, 'Sue' )
+insert into AUTHOR values ( 2, 'John' )
+
+create table PUBLICATION ( \
+	pubid		integer not null, \
+	title		varchar (25) not null, \
+	primary key (pubid) )
+
+insert into PUBLICATION values ( 1, 'Mathematical Logic' )
+insert into PUBLICATION values ( 2, 'Trans. on Databases' )
+insert into PUBLICATION values ( 3, 'Principles of DB Systems' )
+insert into PUBLICATION values ( 4, 'Query Languages' )
+
+create table WROTE ( \
+	author		integer not null, \
+	publication	integer not null, \
+	primary key (author, publication), \
+	foreign key (author) references AUTHOR, \
+	foreign key (publication) references PUBLICATION )
+
+insert into WROTE values ( 1, 1 )
+insert into WROTE values ( 1, 4 )
+insert into WROTE values ( 2, 2 )
+insert into WROTE values ( 1, 2 )
+
+create table BOOK ( \
+	pubid		integer not null, \
+	publisher	varchar (10) not null, \
+	year		char (4) not null, \
+	primary key (pubid), \
+	foreign key (pubid) references PUBLICATION )
+
+insert into BOOK values ( 1, 'AMS', '1990' )
+
+create table JOURNAL_OR_PROCEEDINGS ( \
+	pubid		integer not null, \
+	primary key (pubid), \
+	foreign key (pubid) references PUBLICATION )
+
+insert into JOURNAL_OR_PROCEEDINGS values ( 2 )
+insert into JOURNAL_OR_PROCEEDINGS values ( 3 )
+
+create table JOURNAL ( \
+	pubid		integer not null, \
+	volume		integer not null, \
+	number		integer not null, \
+	year		char (4) not null, \
+	primary key (pubid), \
+	foreign key (pubid) references JOURNAL_OR_PROCEEDINGS )
+
+insert into JOURNAL values ( 3, 35, 1, '1990' )
+
+create table PROCEEDINGS ( \
+	pubid		integer not null, \
+	year		char (4) not null, \
+	primary key (pubid), \
+	foreign key (pubid) references JOURNAL_OR_PROCEEDINGS )
+
+insert into PROCEEDINGS values ( 2, '1995' )
+
+create table ARTICLE ( \
+	pubid		integer not null, \
+	appears_in	integer not null, \
+	startpage	integer not null, \
+	endpage		integer not null, \
+	primary key (pubid), \
+	foreign key (pubid) references PUBLICATION, \
+	foreign key (appears_in) references JOURNAL_OR_PROCEEDINGS )
+
+insert into ARTICLE values ( 4, 2, 30, 41 )
