@@ -1,0 +1,13 @@
+select * \
+from professor as p1, class as c1, enrollment as e1 \
+where p1.dept = 'CS' \
+and p1.pnum = c1.pnum \
+and c1.cnum = e1.cnum and c1.term = e1.term and c1.section = e1.section \
+and ( (c1.cnum = 'CS348' or c1.cnum = 'CS234') and e1.grade is null ) \
+and not exists ( \
+    select * \
+    from professor as p2, class as c2, enrollment as e2 \
+    where p1.pnum = p2.pnum and p2.pnum = c2.pnum \
+    and c2.cnum = e2.cnum and c2.term = e2.term and c2.section = e2.section \
+    and ( (c2.cnum = 'CS348' or c2.cnum = 'CS234') and e2.grade is not null ) \
+)
