@@ -1,0 +1,10 @@
+select cnum, term, count(unique(snum)) as NumberOfStudents \
+from enrollment \
+where cnum not in ( \
+    select distinct cnum \
+    from class as c, professor as p \
+    where c.pnum = p.pnum \
+    and p.dept in ('CS', 'AM') \
+) \
+group by cnum, term \
+order by substring(term, 2, 4), substring(term, 1, 1) desc

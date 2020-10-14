@@ -1,0 +1,5 @@
+select * \
+from class as c1, class as c2, enrollment as e \
+where c1.cnum = c2.cnum and c1.term = c2.term and c1.pnum != c2.pnum \
+and c1.cnum = e.cnum and c1.term = e.term \
+and (c1.section = e.section or c2.section = e.section)

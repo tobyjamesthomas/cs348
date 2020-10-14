@@ -46,6 +46,7 @@ insert into course values ('CS240', 'Intro to Blah')
 insert into course values ('CS348', 'Intro to Databases')
 insert into course values ('CS234', 'Intro to Something CS')
 insert into course values ('SE380', 'Feedback')
+insert into course values ('TE123', 'Teehee 101')
 
 create table class ( \
    cnum      char(5) not null, \
@@ -80,6 +81,9 @@ insert into class values ('SE380', 'F2019', 1, 1)
 insert into class values ('SE380', 'W2020', 1, 1)
 insert into class values ('SE380', 'S2020', 1, 1)
 insert into class values ('SE380', 'S2020', 2, 1)
+
+insert into class values ('TE123', 'S2020', 1, 3)
+insert into class values ('TE123', 'S2020', 2, 3)
 
 create table officehour ( \
    cnum      char(5) not null, \
@@ -125,3 +129,8 @@ insert into enrollment values (1, 'CS234', 'S2020', 2, null)
 insert into enrollment values (3, 'CS348', 'F2019', 1, 99)
 insert into enrollment values (3, 'CS234', 'S2020', 1, null)
 insert into enrollment values (3, 'CS348', 'S2020', 4, null)
+
+insert into enrollment values (1, 'TE123', 'S2020', 1, null)
+insert into enrollment values (2, 'TE123', 'S2020', 1, null)
+insert into enrollment values (3, 'TE123', 'S2020', 1, null)
+insert into enrollment values (3, 'TE123', 'S2020', 2, null)
