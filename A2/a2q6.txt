@@ -1,0 +1,41 @@
+select ((p1.count * 1.0) / p2.count) * 100 as Percentage \
+from ( \
+    select count(*) as count \
+    from professor \
+    where pnum in ( \
+        select distinct pnum \
+        from ( \
+            select pnum, term, count(unique(cnum)) as count \
+            from ( \
+                select p.pnum, c.cnum, c.term, count(unique(c.section)) as count \
+                from professor as p, class as c, enrollment as e \
+                where p.pnum = c.pnum \
+                and c.cnum = e.cnum and c.term = e.term and c.section = e.section \
+                and grade is null \
+                group by p.pnum, c.cnum, c.term \
+            ) as section \
+            where section.count >= 2 \
+            group by pnum, term \
+        ) as course \
+        where course.count >= 2 \
+    ) and pnum not in ( \
+        select distinct pnum \
+        from ( \
+            select pnum, term, count(unique(cnum)) as count \
+            from ( \
+                select p.pnum, c.cnum, c.term, count(unique(c.section)) as count \
+                from professor as p, class as c, enrollment as e \
+                where p.pnum = c.pnum \
+                and c.cnum = e.cnum and c.term = e.term and c.section = e.section \
+                and grade is not null \
+                group by p.pnum, c.cnum, c.term \
+            ) as section \
+            where section.count >= 2 \
+            group by pnum, term \
+        ) as course \
+        where course.count >= 2 \
+    ) \
+) as p1, ( \
+    select count(*) as count \
+    from professor \
+) as p2
