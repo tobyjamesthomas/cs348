@@ -1,5 +1,22 @@
-select * \
-from class as c1, class as c2, enrollment as e \
+select distinct \
+    e1.grade, \
+    p1.pnum, p1.lastname, p1.dept, \
+    p2.pnum, p2.lastname, p2.dept, \
+    course.cname, \
+    c1.cnum, c1.term, c1.section, \
+    c2.cnum, c2.term, c2.section \
+from class as c1, class as c2, enrollment as e1, course, professor as p1, professor as p2 \
 where c1.cnum = c2.cnum and c1.term = c2.term and c1.pnum != c2.pnum \
-and c1.cnum = e.cnum and c1.term = e.term \
-and (c1.section = e.section or c2.section = e.section)
+and c1.cnum = e1.cnum and c1.term = e1.term \
+and (c1.section = e1.section or c2.section = e1.section) \
+and e1.grade in ( \
+    select grade \
+    from enrollment as e2 \
+    where e1.cnum = e2.cnum and e1.term = e2.term \
+    and (c1.section = e2.section or c2.section = e2.section) \
+    order by grade desc \
+    limit 1 \
+) \
+and course.cnum = c1.cnum \
+and p1.pnum = c1.pnum \
+and p2.pnum = c2.pnum

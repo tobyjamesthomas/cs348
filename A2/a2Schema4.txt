@@ -1,0 +1,91 @@
+connect to cs348
+
+--
+--  Schema definition for ENROLLMENT database, with sample data.
+--
+
+echo "dropping old tables"
+
+drop table enrollment
+drop table officehour
+drop table class
+drop table course
+drop table student
+drop table professor
+
+echo "creating new tables"
+
+create table professor ( \
+   pnum     integer not null, \
+   lastname varchar(30) not null, \
+   office   char(6) not null, \
+   dept     char(2) not null, \
+   primary key (pnum))
+
+insert into professor values (1, 'Weddell', 'DC3346', 'CS')
+insert into professor values (2, 'Thomas', 'DC3347', 'CS')
+insert into professor values (3, 'Johames', 'DC3348', 'SE')
+
+create table student ( \
+   snum      integer not null, \
+   firstname varchar(30) not null, \
+   year      integer not null,  \
+   primary key (snum))
+
+insert into student values (1, 'Mary', 4)
+insert into student values (2, 'Fred', 4)
+insert into student values (3, 'Toby', 1)
+
+create table course ( \
+   cnum      char(5) not null, \
+   cname     varchar(50) not null, \
+   primary key (cnum))
+
+insert into course values ('CS348', 'Intro to Databases')
+
+create table class ( \
+   cnum      char(5) not null, \
+   term      char(5) not null, \
+   section   integer not null, \
+   pnum      integer not null, \
+   primary key (cnum,term,section), \
+   foreign key (cnum) references course(cnum), \
+   foreign key (pnum) references professor(pnum))
+
+insert into class values ('CS348', 'F2018', 1, 1)
+insert into class values ('CS348', 'F2018', 2, 2)
+insert into class values ('CS348', 'F2018', 3, 3)
+
+insert into class values ('CS348', 'W2019', 1, 1)
+insert into class values ('CS348', 'W2019', 2, 2)
+insert into class values ('CS348', 'W2019', 3, 3)
+
+create table officehour ( \
+   cnum      char(5) not null, \
+   term      char(5) not null, \
+   pnum      integer not null, \
+   day       varchar(10) not null, \
+   time      char(5) not null, \
+   primary key (cnum,term,pnum,day,time), \
+   foreign key (cnum) references course(cnum), \
+   foreign key (pnum) references professor(pnum))
+
+
+create table enrollment ( \
+   snum      integer not null, \
+   cnum      char(6) not null, \
+   term      char(5) not null, \
+   section   integer not null, \
+   grade     integer, \
+   primary key (snum,cnum,term,section), \
+   foreign key (snum) references student(snum), \
+   foreign key (cnum,term,section) references class(cnum,term,section))
+
+insert into enrollment values (1, 'CS348', 'F2018', 1, 97)
+insert into enrollment values (1, 'CS348', 'W2019', 1, 98)
+
+insert into enrollment values (2, 'CS348', 'F2018', 2, 87)
+insert into enrollment values (2, 'CS348', 'W2019', 2, 88)
+
+insert into enrollment values (3, 'CS348', 'F2018', 3, 97)
+insert into enrollment values (3, 'CS348', 'W2019', 3, 98)
