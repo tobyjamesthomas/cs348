@@ -1,0 +1,6 @@
+select publication, title, appears_in, startpage, endpage \
+from wrote, publication as p, article as a \
+where author=1 \
+and publication=p.pubid \
+and a.pubid=p.pubid \
+and appears_in=2
