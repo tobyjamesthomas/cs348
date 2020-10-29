@@ -10,8 +10,8 @@ db2 bind bibauthor.bnd
 db2 connect reset
 $CC $CFLAGS -o bibauthor bibauthor.c util.c $LIBS
 
-db2 connect to cs348
-db2 prep bibcontent.sqc bindfile
-db2 bind bibcontent.bnd
-db2 connect reset
-$CC $CFLAGS -o bibcontent bibcontent.c util.c $LIBS
+# db2 connect to cs348
+# db2 prep bibcontent.sqc bindfile
+# db2 bind bibcontent.bnd
+# db2 connect reset
+# $CC $CFLAGS -o bibcontent bibcontent.c util.c $LIBS

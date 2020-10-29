@@ -1,0 +1,31 @@
+select pub.pubid, title, \
+case \
+    when book.year is not null then 'BOOK' \
+    when journal.year is not null then 'JOURNAL' \
+    when proceedings.year is not null then 'PROCEEDINGS' \
+end as type, \
+case \
+    when book.year is not null then book.year \
+    when journal.year is not null then journal.year \
+    when proceedings.year is not null then proceedings.year \
+end as year \
+from publication as pub \
+full outer join book on book.pubid=pub.pubid \
+full outer join journal on journal.pubid=pub.pubid \
+full outer join proceedings on proceedings.pubid=pub.pubid \
+where book.pubid in ( \
+    select publication \
+    from wrote \
+    where author=1 \
+) or journal.pubid in ( \
+    select appears_in \
+    from wrote, article \
+    where author=1 \
+    and publication=article.pubid \
+) or proceedings.pubid in ( \
+    select appears_in \
+    from wrote, article \
+    where author=1 \
+    and publication=article.pubid \
+) \
+order by year desc, title

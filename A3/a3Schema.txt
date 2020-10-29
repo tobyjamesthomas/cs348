@@ -28,6 +28,8 @@ insert into PUBLICATION values ( 3, 'Trans. on Databases'  )
 insert into PUBLICATION values ( 4, 'Query Languages'  )
 insert into PUBLICATION values ( 5, 'SQL'  )
 insert into PUBLICATION values ( 6, 'Relational Model'  )
+insert into PUBLICATION values ( 7, 'Intro to Quanta'  )
+insert into PUBLICATION values ( 8, 'Quantum Mechanics'  )
 
 create table WROTE ( \
     author      integer not null, \
@@ -38,6 +40,7 @@ create table WROTE ( \
 
 insert into WROTE values ( 1, 1  )
 insert into WROTE values ( 1, 4  )
+insert into WROTE values ( 1, 7  )
 insert into WROTE values ( 2, 4  )
 insert into WROTE values ( 2, 5  )
 insert into WROTE values ( 2, 6  )
@@ -58,6 +61,7 @@ create table JOURNAL_OR_PROCEEDINGS ( \
 
 insert into JOURNAL_OR_PROCEEDINGS values ( 2  )
 insert into JOURNAL_OR_PROCEEDINGS values ( 3  )
+insert into JOURNAL_OR_PROCEEDINGS values ( 8 )
 
 create table JOURNAL ( \
     pubid       integer not null, \
@@ -68,6 +72,7 @@ create table JOURNAL ( \
     foreign key (pubid) references JOURNAL_OR_PROCEEDINGS )
 
 insert into JOURNAL values ( 3, 35, 1, '1990'  )
+insert into JOURNAL values ( 8, 1, 1, '1995' )
 
 create table PROCEEDINGS ( \
     pubid       integer not null, \
@@ -89,3 +94,4 @@ create table ARTICLE ( \
 insert into ARTICLE values ( 4, 2, 30, 41  )
 insert into ARTICLE values ( 6, 3, 3, 9  )
 insert into ARTICLE values ( 5, 3, 10, 15  )
+insert into ARTICLE values ( 7, 8, 1, 10  )
