@@ -1,0 +1,37 @@
+Pubid: 18
+Type: ARTICLE
+Title: Dragons den article
+Author: Adam
+In: 20
+Pages: 2--3
+
+Pubid: 20
+Type: JOURNAL
+Title: Americano journal
+Volume: 65
+Number: 82
+Year: 2000
+
+Pubid: 19
+Type: BOOK
+Title: Caleb wrote a book
+Author: Adam
+Publisher: Toronto
+Year: 2000
+
+Pubid: 14
+Type: ARTICLE
+Title: Why you can eat burrito
+Author: Adam
+Author: Caleb
+Author: Eddie
+In: 11
+Pages: 99--187
+
+Pubid: 11
+Type: JOURNAL
+Title: New England Journal
+Volume: 54
+Number: 1
+Year: 1990
+

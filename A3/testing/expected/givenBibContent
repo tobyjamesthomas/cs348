@@ -1,0 +1,23 @@
+Pubid: 3
+Type: JOURNAL
+Title: Trans. on Databases
+Volume: 35
+Number: 1
+Year: 1990
+
+Table of Contents:
+
+Pubid: 6
+Type: ARTICLE
+Title: Relational Model
+Author: John
+In: 3
+Pages: 3--9
+
+Pubid: 5
+Type: ARTICLE
+Title: SQL
+Author: John
+In: 3
+Pages: 10--15
+

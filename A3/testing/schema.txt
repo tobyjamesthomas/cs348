@@ -1,0 +1,70 @@
+connect to cs348
+
+drop table WROTE
+drop table AUTHOR
+drop table ARTICLE
+drop table PROCEEDINGS
+drop table JOURNAL
+drop table JOURNAL_OR_PROCEEDINGS
+drop table BOOK
+drop table PUBLICATION
+
+create table AUTHOR ( \
+	aid		integer not null, \
+	name		varchar (10) not null, \
+	primary key (aid) )
+
+
+create table PUBLICATION ( \
+	pubid		integer not null, \
+	title		varchar (25) not null, \
+	primary key (pubid) )
+
+
+create table WROTE ( \
+	author		integer not null, \
+	publication	integer not null, \
+	primary key (author, publication), \
+	foreign key (author) references AUTHOR, \
+	foreign key (publication) references PUBLICATION )
+
+
+create table BOOK ( \
+	pubid		integer not null, \
+	publisher	varchar (10) not null, \
+	year		char (4) not null, \
+	primary key (pubid), \
+	foreign key (pubid) references PUBLICATION )
+
+
+create table JOURNAL_OR_PROCEEDINGS ( \
+	pubid		integer not null, \
+	primary key (pubid), \
+	foreign key (pubid) references PUBLICATION )
+
+
+create table JOURNAL ( \
+	pubid		integer not null, \
+	volume		integer not null, \
+	number		integer not null, \
+	year		char (4) not null, \
+	primary key (pubid), \
+	foreign key (pubid) references JOURNAL_OR_PROCEEDINGS )
+
+
+create table PROCEEDINGS ( \
+	pubid		integer not null, \
+	year		char (4) not null, \
+	primary key (pubid), \
+	foreign key (pubid) references JOURNAL_OR_PROCEEDINGS )
+
+
+create table ARTICLE ( \
+	pubid		integer not null, \
+	appears_in	integer not null, \
+	startpage	integer not null, \
+	endpage		integer not null, \
+	primary key (pubid), \
+	foreign key (pubid) references PUBLICATION, \
+	foreign key (appears_in) references JOURNAL_OR_PROCEEDINGS )
+

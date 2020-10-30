@@ -1,0 +1,29 @@
+Pubid: 2
+Type: PROCEEDINGS
+Title: Principles of DB Systems
+Year: 1995
+
+Table of Contents:
+
+Pubid: 8
+Type: ARTICLE
+Title: Test Article
+Author: Toby
+In: 2
+Pages: 16--20
+
+Pubid: 9
+Type: ARTICLE
+Title: Test Article 2
+Author: Indiana
+In: 2
+Pages: 21--27
+
+Pubid: 4
+Type: ARTICLE
+Title: Query Languages
+Author: John
+Author: Sue
+In: 2
+Pages: 30--41
+

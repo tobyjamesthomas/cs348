@@ -5,6 +5,8 @@
 
 EXEC SQL INCLUDE SQLCA;
 
+
+// Declare variables for SQL queries
 EXEC SQL BEGIN DECLARE SECTION;
     char db[6] = "cs348";
 
@@ -27,7 +29,9 @@ EXEC SQL BEGIN DECLARE SECTION;
     char name[11];
 EXEC SQL END DECLARE SECTION;
 
+
 int main(int argc, char * argv[]) {
+    // Print error if wrong number of arguments
     if (argc != 2) {
         printf("Usage: ./bibauthor <author-id>\n");
         exit(1);
@@ -37,14 +41,19 @@ int main(int argc, char * argv[]) {
 
     EXEC SQL CONNECT TO :db;
 
+    // Get aid from command line
     aid = atoi(argv[1]);
 
+    // Check if author exists
     EXEC SQL SELECT COUNT(1) INTO :found
         FROM author
         WHERE :aid = aid;
 
+    // Go to error if author not found
     if (found == 0) goto error;
 
+    // Get list of books, journals and publications the author appears in
+    // Sort by year, then title
     EXEC SQL DECLARE publications CURSOR FOR
         SELECT pub.pubid, title,
         CASE
@@ -78,16 +87,21 @@ int main(int argc, char * argv[]) {
         )
         ORDER BY year DESC, title;
 
+    // Print publications
     EXEC SQL OPEN publications;
     EXEC SQL WHENEVER NOT FOUND GO TO end;
     for ( ;; ) {
         EXEC SQL FETCH publications INTO :pubid, :title, :type, :year;
 
-        if ( strcmp(type, "BOOK") == 0 ) {
+        if ( strcmp(type, "BOOK") == 0 ) { // Book
+
+            // Print book info
             printf("Pubid: %d\n", pubid);
             printf("Type: %s\n", type);
             printf("Title: %s\n", title);
 
+            // Get list of book's authors
+            // Sort by name
             EXEC SQL DECLARE b_authors CURSOR FOR
                 SELECT name
                 FROM author, wrote
@@ -95,6 +109,7 @@ int main(int argc, char * argv[]) {
                 AND aid = author
                 ORDER BY name;
 
+            // Print authors
             EXEC SQL OPEN b_authors;
             EXEC SQL WHENEVER NOT FOUND GO TO book;
             for ( ;; ) {
@@ -105,13 +120,17 @@ int main(int argc, char * argv[]) {
 book:
             EXEC SQL CLOSE b_authors;
 
+            // Get book's publisher
             EXEC SQL SELECT publisher INTO :publisher
                 FROM book
                 WHERE :pubid = pubid;
 
             printf("Publisher: %s\n", publisher);
             printf("Year: %s\n", year);
-        } else if ( strcmp(type, "JOURNAL") == 0 || strcmp(type, "PROCEEDINGS") == 0 ) {
+        } else if ( strcmp(type, "JOURNAL") == 0 || strcmp(type, "PROCEEDINGS") == 0 ) { // Journal or Proceedings
+
+            // Get the author's articles the appear in the journal or proceedings
+            // Sort by title
             EXEC SQL DECLARE articles CURSOR FOR
                 SELECT publication, title, appears_in, startpage, endpage
                 FROM wrote, publication AS p, article AS a
@@ -120,6 +139,7 @@ book:
                 AND :pubid = appears_in
                 ORDER BY title;
 
+            // Print the articles before the journal or proceedings
             EXEC SQL OPEN articles;
             EXEC SQL WHENEVER NOT FOUND GO TO j_or_p;
             for ( ;; ) {
@@ -128,6 +148,8 @@ book:
                 printf("Type: ARTICLE\n");
                 printf("Title: %s\n", a_title);
 
+                // Get list of article's authors
+                // Sort by name
                 EXEC SQL DECLARE a_authors CURSOR FOR
                     SELECT name
                     FROM author, wrote
@@ -135,6 +157,7 @@ book:
                     AND aid = author
                     ORDER BY name;
 
+                // Print authors
                 EXEC SQL OPEN a_authors;
                 EXEC SQL WHENEVER NOT FOUND GO TO article;
                 for ( ;; ) {
@@ -146,16 +169,18 @@ article:
                 EXEC SQL CLOSE a_authors;
                 printf("In: %d\n", appears_in);
                 printf("Pages: %d--%d\n", startpage, endpage);
-                printf("\n");
+                printf("\n"); // Blank line
             }
 
 j_or_p:
             EXEC SQL CLOSE articles;
 
+            // Print the journal or proceeding
             printf("Pubid: %d\n", pubid);
             printf("Type: %s\n", type);
             printf("Title: %s\n", title);
 
+            // If journal, then print journal's volume and number
             if ( strcmp(type, "JOURNAL") == 0 ) {
                 EXEC SQL SELECT volume, number INTO :volume, :number
                     FROM journal
@@ -168,7 +193,7 @@ j_or_p:
             printf("Year: %s\n", year);
         }
 
-        printf("\n");
+        printf("\n"); // Blank line
     }
 
 end:
@@ -179,7 +204,7 @@ end:
     exit(0);
 
 error:
-    printf("ERROR\n");
+    printf("Error\n");
     EXEC SQL WHENEVER SQLERROR CONTINUE;
 
     EXEC SQL ROLLBACK;

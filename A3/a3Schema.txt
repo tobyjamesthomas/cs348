@@ -16,6 +16,7 @@ create table AUTHOR ( \
 
 insert into AUTHOR values ( 1, 'Sue'  )
 insert into AUTHOR values ( 2, 'John'  )
+insert into AUTHOR values ( 3, 'Sailesh' )
 
 create table PUBLICATION ( \
     pubid       integer not null, \
@@ -44,6 +45,7 @@ insert into WROTE values ( 1, 7  )
 insert into WROTE values ( 2, 4  )
 insert into WROTE values ( 2, 5  )
 insert into WROTE values ( 2, 6  )
+insert into WROTE values ( 3, 7  )
 
 create table BOOK ( \
     pubid       integer not null, \

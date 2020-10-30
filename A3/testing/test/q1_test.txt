@@ -1,0 +1,53 @@
+truncate table course
+truncate table class
+truncate table enrollment
+truncate table professor
+truncate table student
+truncate table officehour
+
+insert into professor values (1, ’Weddell’, ’DC3346’, ’CS’)
+
+insert into student values (1, ’Mary’, 3)
+insert into student values (2, ’Fred’, 2)
+
+insert into course values ('CS240', 'Data Structures and Data Management')
+insert into course values ('CS241', 'Foundations of Sequential Programs')
+insert into course values ('CS245', 'Logic and Computation')
+insert into course values ('CS247', 'Software Engineering Principles')
+insert into course values ('CS246', 'Object-Oriented Software Development') 
+insert into course values ('CS135', 'Designing Functional Programs')
+insert into course values ('CS136', 'Elementary Algorithm Design and Data Abstraction') 
+insert into course values ('CS137', 'Programming Principles') 
+insert into course values ('CS138', 'Intro to Data Abstraction and Implementation') 
+insert into course values ('CS343', 'Introduction to Concurrency')
+insert into course values ('CS350', 'Operating Systems')
+
+insert into class values (’CS348’, ’F2018’, 1, 1)
+insert into class values (’CS348’, ’F2018’, 2, 1)
+insert into class values (’CS348’, ’S2020’, 1, 1)
+insert into class values (’CS348’, ’S2020’, 2, 1)
+insert into class values ('CS240', 'F2020', 1, 1)
+insert into class values ('CS241', 'F2020', 1, 1)
+insert into class values ('CS245', 'F2020', 1, 1)
+insert into class values ('CS247', 'F2020', 1, 1)
+insert into class values ('CS246', 'F2020', 1, 1)
+insert into class values ('CS135', 'F2020', 1, 1)
+insert into class values ('CS136', 'F2020', 1, 1)
+insert into class values ('CS137', 'F2020', 1, 1)
+insert into class values ('CS138', 'F2020', 1, 1)
+insert into class values ('CS343', 'F2020', 1, 1)
+insert into class values ('CS350', 'F2020', 1, 1)
+
+insert into officehour values (’CS348’, ’S2020’, 1, ’Tuesday’, ’09:00’)
+insert into officehour values (’CS348’, ’S2020’, 1, ’Thursday’, ’14:30’)
+
+insert into enrollment values (1, ’CS348’, ’F2018’, 1, 88)
+insert into enrollment values (2, ’CS348’, ’S2020’, 1, null)
+insert into enrollment values (1, 'CS240', 'F2020', 1, 92)
+insert into enrollment values (1, 'CS247', 'F2020', 1, 91)
+insert into enrollment values (1, 'CS245', 'F2020', 1, 90)
+insert into enrollment values (1, 'CS241', 'F2020', 1, 50)
+insert into enrollment values (1, 'CS246', 'F2020', 1, 51)
+insert into enrollment values (2, 'CS240', 'F2020', 1, 92)
+insert into enrollment values (2, 'CS343', 'F2020', 1, 97)
+insert into enrollment values (2, 'CS350', 'F2020', 1, 90)

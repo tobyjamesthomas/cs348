@@ -1,0 +1,28 @@
+insert into AUTHOR values ( 1, 'Sue' )
+insert into AUTHOR values ( 2, 'John' )
+
+insert into PUBLICATION values ( 1, 'Mathematical Logic' )
+insert into PUBLICATION values ( 2, 'Principles of DB Systems' )
+insert into PUBLICATION values ( 3, 'Trans. on Databases' )
+insert into PUBLICATION values ( 4, 'Query Languages' )
+insert into PUBLICATION values ( 5, 'SQL' )
+insert into PUBLICATION values ( 6, 'Relational Model' )
+
+insert into WROTE values ( 1, 1 )
+insert into WROTE values ( 1, 4 )
+insert into WROTE values ( 2, 4 )
+insert into WROTE values ( 2, 5 )
+insert into WROTE values ( 2, 6 )
+
+insert into BOOK values ( 1, 'AMS', '1990' )
+
+insert into JOURNAL_OR_PROCEEDINGS values ( 2 )
+insert into JOURNAL_OR_PROCEEDINGS values ( 3 )
+
+insert into JOURNAL values ( 3, 35, 1, '1990' )
+
+insert into PROCEEDINGS values ( 2, '1995' )
+
+insert into ARTICLE values ( 4, 2, 30, 41 )
+insert into ARTICLE values ( 6, 3, 3, 9 )
+insert into ARTICLE values ( 5, 3, 10, 15 )

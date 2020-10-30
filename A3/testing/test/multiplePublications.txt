@@ -1,0 +1,66 @@
+Pubid: 15
+Type: ARTICLE
+Title: The theory of NP complete
+Author: Caleb
+In: 12
+Pages: 209--210
+
+Pubid: 13
+Type: ARTICLE
+Title: Why is E=mc^2 is wrong
+Author: Caleb
+In: 12
+Pages: 1--2
+
+Pubid: 12
+Type: PROCEEDINGS
+Title: Proceedings of Physics
+Year: 2020
+
+Pubid: 1
+Type: BOOK
+Title: Mathematical Logic
+Author: Caleb
+Author: Sue
+Publisher: AMS
+Year: 1990
+
+Pubid: 17
+Type: ARTICLE
+Title: Caffeine is overrated
+Author: Caleb
+In: 11
+Pages: 188--210
+
+Pubid: 16
+Type: ARTICLE
+Title: Fist bumps are healthier
+Author: Caleb
+In: 11
+Pages: 215--313
+
+Pubid: 14
+Type: ARTICLE
+Title: Why you can eat burrito
+Author: Adam
+Author: Caleb
+Author: Eddie
+In: 11
+Pages: 99--187
+
+Pubid: 11
+Type: JOURNAL
+Title: New England Journal
+Volume: 54
+Number: 1
+Year: 1990
+
+Pubid: 10
+Type: BOOK
+Title: Adv of Sherlock Holmes
+Author: Caleb
+Author: John
+Author: Toby
+Publisher: London
+Year: 1881
+
