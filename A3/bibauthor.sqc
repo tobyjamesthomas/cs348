@@ -53,7 +53,7 @@ int main(int argc, char * argv[]) {
     if (found == 0) goto error;
 
     // Get list of books, journals and publications the author appears in
-    // Sort by year, then title
+    // Sort by year (DESC), then title
     EXEC SQL DECLARE publications CURSOR FOR
         SELECT pub.pubid, title,
         CASE
@@ -93,7 +93,7 @@ int main(int argc, char * argv[]) {
     for ( ;; ) {
         EXEC SQL FETCH publications INTO :pubid, :title, :type, :year;
 
-        if ( strcmp(type, "BOOK") == 0 ) { // Book
+        if ( strcmp(type, "BOOK") == 0 ) { // Publication is a Book
 
             // Print book info
             printf("Pubid: %d\n", pubid);
@@ -129,7 +129,7 @@ book:
             printf("Year: %s\n", year);
         } else if ( strcmp(type, "JOURNAL") == 0 || strcmp(type, "PROCEEDINGS") == 0 ) { // Journal or Proceedings
 
-            // Get the author's articles the appear in the journal or proceedings
+            // Get the author's articles that appear in the journal or proceedings
             // Sort by title
             EXEC SQL DECLARE articles CURSOR FOR
                 SELECT publication, title, appears_in, startpage, endpage
@@ -144,6 +144,8 @@ book:
             EXEC SQL WHENEVER NOT FOUND GO TO j_or_p;
             for ( ;; ) {
                 EXEC SQL FETCH articles INTO :a_pubid, :a_title, :appears_in, :startpage, :endpage;
+
+                // Print article info
                 printf("Pubid: %d\n", a_pubid);
                 printf("Type: ARTICLE\n");
                 printf("Title: %s\n", a_title);
@@ -167,6 +169,8 @@ book:
 
 article:
                 EXEC SQL CLOSE a_authors;
+
+                // Print remaining article info
                 printf("In: %d\n", appears_in);
                 printf("Pages: %d--%d\n", startpage, endpage);
                 printf("\n"); // Blank line
