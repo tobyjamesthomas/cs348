@@ -1,0 +1,13 @@
+select title, \
+case \
+    when journal.pubid is not null then 'JOURNAL' \
+    when proceedings.pubid is not null then 'PROCEEDINGS' \
+end as type, \
+case \
+    when journal.year is not null then journal.year \
+    when proceedings.year is not null then proceedings.year \
+end as year \
+from publication as p \
+full outer join journal on journal.pubid = p.pubid \
+full outer join proceedings on proceedings.pubid = p.pubid \
+where p.pubid = 3

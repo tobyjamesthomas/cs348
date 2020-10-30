@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "util.h"
+
+EXEC SQL INCLUDE SQLCA;
+
+EXEC SQL BEGIN DECLARE SECTION;
+    char db[6] = "cs348";
+
+    // general
+    int pubid, found;
+    char title[26], type[12], year[5];
+
+    // journal
+    int volume, number;
+
+    // article
+    int appears_in, startpage, endpage;
+
+    // author
+    char name[11];
+EXEC SQL END DECLARE SECTION;
+
+int main(int argc, char * argv[]) {
+    if (argc != 2) {
+        printf("Usage: ./bibcontent <pubid>\n");
+        exit(1);
+    }
+
+    EXEC SQL WHENEVER SQLERROR GO TO error;
+
+    EXEC SQL CONNECT TO :db;
+
+    pubid = atoi(argv[1]);
+
+    EXEC SQL SELECT COUNT(1) INTO :found
+        FROM journal_or_proceedings
+        WHERE :pubid = pubid;
+
+    if (found == 0) goto error;
+
+    EXEC SQL SELECT title,
+        CASE
+            WHEN j.pubid IS NOT NULL THEN 'JOURNAL'
+            WHEN pro.pubid IS NOT NULL THEN 'PROCEEDINGS'
+        END AS type,
+        CASE
+            WHEN j.year IS NOT NULL THEN j.year
+            WHEN pro.year IS NOT NULL THEN pro.year
+        END AS year
+        INTO :title, :type, :year
+        FROM publication AS pub
+        FULL OUTER JOIN journal AS j ON j.pubid = pub.pubid
+        FULL OUTER JOIN proceedings AS pro ON pro.pubid = pub.pubid
+        WHERE :pubid = pub.pubid;
+
+    printf("Pubid: %d\n", pubid);
+    printf("Type: %s\n", type);
+    printf("Title: %s\n", title);
+
+    if (strcmp(type, "JOURNAL") == 0) {
+        EXEC SQL SELECT volume, number INTO :volume, :number
+            FROM journal
+            WHERE :pubid = pubid;
+
+        printf("Volume: %d\n", volume);
+        printf("Number: %d\n", number);
+    }
+
+    printf("Year: %s\n", year);
+
+    printf("\n");
+    printf("Table of Contents:\n");
+    printf("\n");
+
+    EXEC SQL DECLARE articles CURSOR FOR
+        SELECT a.pubid, title, appears_in, startpage, endpage
+        FROM article AS a, publication AS p
+        WHERE :pubid = appears_in
+        AND p.pubid = a.pubid
+        ORDER BY startpage;
+
+    EXEC SQL OPEN articles;
+    EXEC SQL WHENEVER NOT FOUND GO TO end;
+    for ( ;; ) {
+        EXEC SQL FETCH articles INTO :pubid, :title, :appears_in, :startpage, :endpage;
+        printf("Pubid: %d\n", pubid);
+        printf("Type: ARTICLE\n");
+        printf("Title: %s\n", title);
+
+        EXEC SQL DECLARE authors CURSOR FOR
+            SELECT name
+            FROM author, wrote
+            WHERE :pubid = publication
+            AND aid = author
+            ORDER BY name;
+
+        EXEC SQL OPEN authors;
+        EXEC SQL WHENEVER NOT FOUND GO TO article;
+        for ( ;; ) {
+            EXEC SQL FETCH authors INTO :name;
+            printf("Author: %s\n", name);
+        }
+
+article:
+        EXEC SQL CLOSE authors;
+        printf("In: %d\n", appears_in);
+        printf("Pages: %d--%d\n", startpage, endpage);
+        printf("\n");
+    }
+
+end:
+    EXEC SQL CLOSE articles;
+
+    EXEC SQL COMMIT;
+    EXEC SQL CONNECT reset;
+    exit(0);
+
+error:
+    printf("ERROR\n");
+    EXEC SQL WHENEVER SQLERROR CONTINUE;
+
+    EXEC SQL ROLLBACK;
+    EXEC SQL CONNECT reset;
+    exit(1);
+}

@@ -9,21 +9,22 @@ EXEC SQL BEGIN DECLARE SECTION;
     char db[6] = "cs348";
 
     // general
-    int aid, pubid;
+    int aid, found;
+    int pubid;
     char title[26], type[12], year[5];
-
-    // author
-    char name[11];
 
     // book
     char publisher[11];
 
-    // article
-    char atitle[26];
-    int artid, appears_in, startpage, endpage;
-
     // journal
     int volume, number;
+
+    // article
+    char a_title[26];
+    int a_pubid, appears_in, startpage, endpage;
+
+    // author
+    char name[11];
 EXEC SQL END DECLARE SECTION;
 
 int main(int argc, char * argv[]) {
@@ -37,6 +38,12 @@ int main(int argc, char * argv[]) {
     EXEC SQL CONNECT TO :db;
 
     aid = atoi(argv[1]);
+
+    EXEC SQL SELECT COUNT(1) INTO :found
+        FROM author
+        WHERE :aid = aid;
+
+    if (found == 0) goto error;
 
     EXEC SQL DECLARE publications CURSOR FOR
         SELECT pub.pubid, title,
@@ -97,6 +104,7 @@ int main(int argc, char * argv[]) {
 
 book:
             EXEC SQL CLOSE b_authors;
+
             EXEC SQL SELECT publisher INTO :publisher
                 FROM book
                 WHERE :pubid = pubid;
@@ -113,17 +121,17 @@ book:
                 ORDER BY title;
 
             EXEC SQL OPEN articles;
-            EXEC SQL WHENEVER NOT FOUND GO TO jorp;
+            EXEC SQL WHENEVER NOT FOUND GO TO j_or_p;
             for ( ;; ) {
-                EXEC SQL FETCH articles INTO :artid, :atitle, :appears_in, :startpage, :endpage;
-                printf("Pubid: %d\n", artid);
+                EXEC SQL FETCH articles INTO :a_pubid, :a_title, :appears_in, :startpage, :endpage;
+                printf("Pubid: %d\n", a_pubid);
                 printf("Type: ARTICLE\n");
-                printf("Title: %s\n", atitle);
+                printf("Title: %s\n", a_title);
 
                 EXEC SQL DECLARE a_authors CURSOR FOR
                     SELECT name
                     FROM author, wrote
-                    WHERE :artid = publication
+                    WHERE :a_pubid = publication
                     AND aid = author
                     ORDER BY name;
 
@@ -141,8 +149,9 @@ article:
                 printf("\n");
             }
 
-jorp:
+j_or_p:
             EXEC SQL CLOSE articles;
+
             printf("Pubid: %d\n", pubid);
             printf("Type: %s\n", type);
             printf("Title: %s\n", title);
@@ -157,8 +166,6 @@ jorp:
             }
 
             printf("Year: %s\n", year);
-        } else {
-            // error
         }
 
         printf("\n");
@@ -172,7 +179,7 @@ end:
     exit(0);
 
 error:
-    check_error("My error", &sqlca);
+    printf("ERROR\n");
     EXEC SQL WHENEVER SQLERROR CONTINUE;
 
     EXEC SQL ROLLBACK;

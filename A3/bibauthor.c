@@ -1,6 +1,6 @@
 static char sqla_program_id[292] = 
 {
- 172,0,65,69,65,85,65,73,56,65,53,109,84,100,75,107,48,49,49,49,
+ 172,0,65,69,65,85,65,73,102,65,109,118,88,100,75,107,48,49,49,49,
  49,32,50,32,32,32,32,32,32,32,32,32,8,0,84,74,84,72,79,77,
  65,83,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -56,27 +56,28 @@ EXEC SQL BEGIN DECLARE SECTION;
     char db[6] = "cs348";
 
     // general
-    sqlint32 aid, pubid;
+    sqlint32 aid, found;
+    sqlint32 pubid;
     char title[26], type[12], year[5];
-
-    // author
-    char name[11];
 
     // book
     char publisher[11];
 
-    // article
-    char atitle[26];
-    sqlint32 artid, appears_in, startpage, endpage;
-
     // journal
     sqlint32 volume, number;
+
+    // article
+    char a_title[26];
+    sqlint32 a_pubid, appears_in, startpage, endpage;
+
+    // author
+    char name[11];
 
 /*
 EXEC SQL END DECLARE SECTION;
 */
 
-#line 27 "bibauthor.sqc"
+#line 28 "bibauthor.sqc"
 
 
 int main(int argc, char * argv[]) {
@@ -90,7 +91,7 @@ int main(int argc, char * argv[]) {
 EXEC SQL WHENEVER SQLERROR GO TO error;
 */
 
-#line 35 "bibauthor.sqc"
+#line 36 "bibauthor.sqc"
 
 
     
@@ -99,37 +100,90 @@ EXEC SQL CONNECT TO :db;
 */
 
 {
-#line 37 "bibauthor.sqc"
+#line 38 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 37 "bibauthor.sqc"
+#line 38 "bibauthor.sqc"
   sqlaaloc(2,1,1,0L);
     {
       struct sqla_setdata_list sql_setdlist[1];
-#line 37 "bibauthor.sqc"
+#line 38 "bibauthor.sqc"
       sql_setdlist[0].sqltype = 460; sql_setdlist[0].sqllen = 6;
-#line 37 "bibauthor.sqc"
+#line 38 "bibauthor.sqc"
       sql_setdlist[0].sqldata = (void*)db;
-#line 37 "bibauthor.sqc"
+#line 38 "bibauthor.sqc"
       sql_setdlist[0].sqlind = 0L;
-#line 37 "bibauthor.sqc"
+#line 38 "bibauthor.sqc"
       sqlasetdata(2,0,1,sql_setdlist,0L,0L);
     }
-#line 37 "bibauthor.sqc"
+#line 38 "bibauthor.sqc"
   sqlacall((unsigned short)29,4,2,0,0L);
-#line 37 "bibauthor.sqc"
+#line 38 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 37 "bibauthor.sqc"
+#line 38 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 37 "bibauthor.sqc"
+#line 38 "bibauthor.sqc"
 
 
     aid = atoi(argv[1]);
+
+    
+/*
+EXEC SQL SELECT COUNT(1) INTO :found
+        FROM author
+        WHERE :aid = aid;
+*/
+
+{
+#line 44 "bibauthor.sqc"
+  sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
+#line 44 "bibauthor.sqc"
+  sqlaaloc(2,1,2,0L);
+    {
+      struct sqla_setdata_list sql_setdlist[1];
+#line 44 "bibauthor.sqc"
+      sql_setdlist[0].sqltype = 496; sql_setdlist[0].sqllen = 4;
+#line 44 "bibauthor.sqc"
+      sql_setdlist[0].sqldata = (void*)&aid;
+#line 44 "bibauthor.sqc"
+      sql_setdlist[0].sqlind = 0L;
+#line 44 "bibauthor.sqc"
+      sqlasetdata(2,0,1,sql_setdlist,0L,0L);
+    }
+#line 44 "bibauthor.sqc"
+  sqlaaloc(3,1,3,0L);
+    {
+      struct sqla_setdata_list sql_setdlist[1];
+#line 44 "bibauthor.sqc"
+      sql_setdlist[0].sqltype = 496; sql_setdlist[0].sqllen = 4;
+#line 44 "bibauthor.sqc"
+      sql_setdlist[0].sqldata = (void*)&found;
+#line 44 "bibauthor.sqc"
+      sql_setdlist[0].sqlind = 0L;
+#line 44 "bibauthor.sqc"
+      sqlasetdata(3,0,1,sql_setdlist,0L,0L);
+    }
+#line 44 "bibauthor.sqc"
+  sqlacall((unsigned short)24,1,2,3,0L);
+#line 44 "bibauthor.sqc"
+  if (sqlca.sqlcode < 0)
+  {
+    sqlastop(0L);
+    goto error;
+  }
+#line 44 "bibauthor.sqc"
+  sqlastop(0L);
+}
+
+#line 44 "bibauthor.sqc"
+
+
+    if (found == 0) goto error;
 
     
 /*
@@ -167,7 +221,7 @@ EXEC SQL DECLARE publications CURSOR FOR
         ORDER BY year DESC, title;
 */
 
-#line 72 "bibauthor.sqc"
+#line 79 "bibauthor.sqc"
 
 
     
@@ -176,53 +230,53 @@ EXEC SQL OPEN publications;
 */
 
 {
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 74 "bibauthor.sqc"
-  sqlaaloc(2,3,2,0L);
+#line 81 "bibauthor.sqc"
+  sqlaaloc(2,3,4,0L);
     {
       struct sqla_setdata_list sql_setdlist[3];
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
       sql_setdlist[0].sqltype = 496; sql_setdlist[0].sqllen = 4;
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
       sql_setdlist[0].sqldata = (void*)&aid;
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
       sql_setdlist[0].sqlind = 0L;
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
       sql_setdlist[1].sqltype = 496; sql_setdlist[1].sqllen = 4;
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
       sql_setdlist[1].sqldata = (void*)&aid;
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
       sql_setdlist[1].sqlind = 0L;
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
       sql_setdlist[2].sqltype = 496; sql_setdlist[2].sqllen = 4;
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
       sql_setdlist[2].sqldata = (void*)&aid;
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
       sql_setdlist[2].sqlind = 0L;
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
       sqlasetdata(2,0,3,sql_setdlist,0L,0L);
     }
-#line 74 "bibauthor.sqc"
-  sqlacall((unsigned short)26,1,2,0,0L);
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
+  sqlacall((unsigned short)26,2,2,0,0L);
+#line 81 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 74 "bibauthor.sqc"
+#line 81 "bibauthor.sqc"
 
     
 /*
 EXEC SQL WHENEVER NOT FOUND GO TO end;
 */
 
-#line 75 "bibauthor.sqc"
+#line 82 "bibauthor.sqc"
 
     for ( ;; ) {
         
@@ -231,58 +285,58 @@ EXEC SQL FETCH publications INTO :pubid, :title, :type, :year;
 */
 
 {
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 77 "bibauthor.sqc"
-  sqlaaloc(3,4,3,0L);
+#line 84 "bibauthor.sqc"
+  sqlaaloc(3,4,5,0L);
     {
       struct sqla_setdata_list sql_setdlist[4];
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
       sql_setdlist[0].sqltype = 496; sql_setdlist[0].sqllen = 4;
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
       sql_setdlist[0].sqldata = (void*)&pubid;
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
       sql_setdlist[0].sqlind = 0L;
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
       sql_setdlist[1].sqltype = 460; sql_setdlist[1].sqllen = 26;
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
       sql_setdlist[1].sqldata = (void*)title;
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
       sql_setdlist[1].sqlind = 0L;
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
       sql_setdlist[2].sqltype = 460; sql_setdlist[2].sqllen = 12;
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
       sql_setdlist[2].sqldata = (void*)type;
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
       sql_setdlist[2].sqlind = 0L;
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
       sql_setdlist[3].sqltype = 460; sql_setdlist[3].sqllen = 5;
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
       sql_setdlist[3].sqldata = (void*)year;
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
       sql_setdlist[3].sqlind = 0L;
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
       sqlasetdata(3,0,4,sql_setdlist,0L,0L);
     }
-#line 77 "bibauthor.sqc"
-  sqlacall((unsigned short)25,1,0,3,0L);
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
+  sqlacall((unsigned short)25,2,0,3,0L);
+#line 84 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto end;
   }
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 77 "bibauthor.sqc"
+#line 84 "bibauthor.sqc"
 
 
         if ( strcmp(type, "BOOK") == 0 ) {
@@ -300,7 +354,7 @@ EXEC SQL DECLARE b_authors CURSOR FOR
                 ORDER BY name;
 */
 
-#line 89 "bibauthor.sqc"
+#line 96 "bibauthor.sqc"
 
 
             
@@ -309,47 +363,47 @@ EXEC SQL OPEN b_authors;
 */
 
 {
-#line 91 "bibauthor.sqc"
+#line 98 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 91 "bibauthor.sqc"
-  sqlaaloc(2,1,4,0L);
+#line 98 "bibauthor.sqc"
+  sqlaaloc(2,1,6,0L);
     {
       struct sqla_setdata_list sql_setdlist[1];
-#line 91 "bibauthor.sqc"
+#line 98 "bibauthor.sqc"
       sql_setdlist[0].sqltype = 496; sql_setdlist[0].sqllen = 4;
-#line 91 "bibauthor.sqc"
+#line 98 "bibauthor.sqc"
       sql_setdlist[0].sqldata = (void*)&pubid;
-#line 91 "bibauthor.sqc"
+#line 98 "bibauthor.sqc"
       sql_setdlist[0].sqlind = 0L;
-#line 91 "bibauthor.sqc"
+#line 98 "bibauthor.sqc"
       sqlasetdata(2,0,1,sql_setdlist,0L,0L);
     }
-#line 91 "bibauthor.sqc"
-  sqlacall((unsigned short)26,2,2,0,0L);
-#line 91 "bibauthor.sqc"
+#line 98 "bibauthor.sqc"
+  sqlacall((unsigned short)26,3,2,0,0L);
+#line 98 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 91 "bibauthor.sqc"
+#line 98 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto end;
   }
-#line 91 "bibauthor.sqc"
+#line 98 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 91 "bibauthor.sqc"
+#line 98 "bibauthor.sqc"
 
             
 /*
 EXEC SQL WHENEVER NOT FOUND GO TO book;
 */
 
-#line 92 "bibauthor.sqc"
+#line 99 "bibauthor.sqc"
 
             for ( ;; ) {
                 
@@ -358,40 +412,40 @@ EXEC SQL FETCH b_authors INTO :name;
 */
 
 {
-#line 94 "bibauthor.sqc"
+#line 101 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 94 "bibauthor.sqc"
-  sqlaaloc(3,1,5,0L);
+#line 101 "bibauthor.sqc"
+  sqlaaloc(3,1,7,0L);
     {
       struct sqla_setdata_list sql_setdlist[1];
-#line 94 "bibauthor.sqc"
+#line 101 "bibauthor.sqc"
       sql_setdlist[0].sqltype = 460; sql_setdlist[0].sqllen = 11;
-#line 94 "bibauthor.sqc"
+#line 101 "bibauthor.sqc"
       sql_setdlist[0].sqldata = (void*)name;
-#line 94 "bibauthor.sqc"
+#line 101 "bibauthor.sqc"
       sql_setdlist[0].sqlind = 0L;
-#line 94 "bibauthor.sqc"
+#line 101 "bibauthor.sqc"
       sqlasetdata(3,0,1,sql_setdlist,0L,0L);
     }
-#line 94 "bibauthor.sqc"
-  sqlacall((unsigned short)25,2,0,3,0L);
-#line 94 "bibauthor.sqc"
+#line 101 "bibauthor.sqc"
+  sqlacall((unsigned short)25,3,0,3,0L);
+#line 101 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 94 "bibauthor.sqc"
+#line 101 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto book;
   }
-#line 94 "bibauthor.sqc"
+#line 101 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 94 "bibauthor.sqc"
+#line 101 "bibauthor.sqc"
 
                 printf("Author: %s\n", name);
             }
@@ -403,27 +457,28 @@ EXEC SQL CLOSE b_authors;
 */
 
 {
-#line 99 "bibauthor.sqc"
+#line 106 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 99 "bibauthor.sqc"
-  sqlacall((unsigned short)20,2,0,0,0L);
-#line 99 "bibauthor.sqc"
+#line 106 "bibauthor.sqc"
+  sqlacall((unsigned short)20,3,0,0,0L);
+#line 106 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 99 "bibauthor.sqc"
+#line 106 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto book;
   }
-#line 99 "bibauthor.sqc"
+#line 106 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 99 "bibauthor.sqc"
+#line 106 "bibauthor.sqc"
+
 
             
 /*
@@ -433,53 +488,53 @@ EXEC SQL SELECT publisher INTO :publisher
 */
 
 {
-#line 102 "bibauthor.sqc"
+#line 110 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 102 "bibauthor.sqc"
-  sqlaaloc(2,1,6,0L);
+#line 110 "bibauthor.sqc"
+  sqlaaloc(2,1,8,0L);
     {
       struct sqla_setdata_list sql_setdlist[1];
-#line 102 "bibauthor.sqc"
+#line 110 "bibauthor.sqc"
       sql_setdlist[0].sqltype = 496; sql_setdlist[0].sqllen = 4;
-#line 102 "bibauthor.sqc"
+#line 110 "bibauthor.sqc"
       sql_setdlist[0].sqldata = (void*)&pubid;
-#line 102 "bibauthor.sqc"
+#line 110 "bibauthor.sqc"
       sql_setdlist[0].sqlind = 0L;
-#line 102 "bibauthor.sqc"
+#line 110 "bibauthor.sqc"
       sqlasetdata(2,0,1,sql_setdlist,0L,0L);
     }
-#line 102 "bibauthor.sqc"
-  sqlaaloc(3,1,7,0L);
+#line 110 "bibauthor.sqc"
+  sqlaaloc(3,1,9,0L);
     {
       struct sqla_setdata_list sql_setdlist[1];
-#line 102 "bibauthor.sqc"
+#line 110 "bibauthor.sqc"
       sql_setdlist[0].sqltype = 460; sql_setdlist[0].sqllen = 11;
-#line 102 "bibauthor.sqc"
+#line 110 "bibauthor.sqc"
       sql_setdlist[0].sqldata = (void*)publisher;
-#line 102 "bibauthor.sqc"
+#line 110 "bibauthor.sqc"
       sql_setdlist[0].sqlind = 0L;
-#line 102 "bibauthor.sqc"
+#line 110 "bibauthor.sqc"
       sqlasetdata(3,0,1,sql_setdlist,0L,0L);
     }
-#line 102 "bibauthor.sqc"
-  sqlacall((unsigned short)24,3,2,3,0L);
-#line 102 "bibauthor.sqc"
+#line 110 "bibauthor.sqc"
+  sqlacall((unsigned short)24,4,2,3,0L);
+#line 110 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 102 "bibauthor.sqc"
+#line 110 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto book;
   }
-#line 102 "bibauthor.sqc"
+#line 110 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 102 "bibauthor.sqc"
+#line 110 "bibauthor.sqc"
 
 
             printf("Publisher: %s\n", publisher);
@@ -496,7 +551,7 @@ EXEC SQL DECLARE articles CURSOR FOR
                 ORDER BY title;
 */
 
-#line 113 "bibauthor.sqc"
+#line 121 "bibauthor.sqc"
 
 
             
@@ -505,135 +560,135 @@ EXEC SQL OPEN articles;
 */
 
 {
-#line 115 "bibauthor.sqc"
+#line 123 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 115 "bibauthor.sqc"
-  sqlaaloc(2,2,8,0L);
+#line 123 "bibauthor.sqc"
+  sqlaaloc(2,2,10,0L);
     {
       struct sqla_setdata_list sql_setdlist[2];
-#line 115 "bibauthor.sqc"
+#line 123 "bibauthor.sqc"
       sql_setdlist[0].sqltype = 496; sql_setdlist[0].sqllen = 4;
-#line 115 "bibauthor.sqc"
+#line 123 "bibauthor.sqc"
       sql_setdlist[0].sqldata = (void*)&aid;
-#line 115 "bibauthor.sqc"
+#line 123 "bibauthor.sqc"
       sql_setdlist[0].sqlind = 0L;
-#line 115 "bibauthor.sqc"
+#line 123 "bibauthor.sqc"
       sql_setdlist[1].sqltype = 496; sql_setdlist[1].sqllen = 4;
-#line 115 "bibauthor.sqc"
+#line 123 "bibauthor.sqc"
       sql_setdlist[1].sqldata = (void*)&pubid;
-#line 115 "bibauthor.sqc"
+#line 123 "bibauthor.sqc"
       sql_setdlist[1].sqlind = 0L;
-#line 115 "bibauthor.sqc"
+#line 123 "bibauthor.sqc"
       sqlasetdata(2,0,2,sql_setdlist,0L,0L);
     }
-#line 115 "bibauthor.sqc"
-  sqlacall((unsigned short)26,4,2,0,0L);
-#line 115 "bibauthor.sqc"
+#line 123 "bibauthor.sqc"
+  sqlacall((unsigned short)26,5,2,0,0L);
+#line 123 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 115 "bibauthor.sqc"
+#line 123 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto book;
   }
-#line 115 "bibauthor.sqc"
+#line 123 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 115 "bibauthor.sqc"
+#line 123 "bibauthor.sqc"
 
             
 /*
-EXEC SQL WHENEVER NOT FOUND GO TO jorp;
+EXEC SQL WHENEVER NOT FOUND GO TO j_or_p;
 */
 
-#line 116 "bibauthor.sqc"
+#line 124 "bibauthor.sqc"
 
             for ( ;; ) {
                 
 /*
-EXEC SQL FETCH articles INTO :artid, :atitle, :appears_in, :startpage, :endpage;
+EXEC SQL FETCH articles INTO :a_pubid, :a_title, :appears_in, :startpage, :endpage;
 */
 
 {
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 118 "bibauthor.sqc"
-  sqlaaloc(3,5,9,0L);
+#line 126 "bibauthor.sqc"
+  sqlaaloc(3,5,11,0L);
     {
       struct sqla_setdata_list sql_setdlist[5];
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
       sql_setdlist[0].sqltype = 496; sql_setdlist[0].sqllen = 4;
-#line 118 "bibauthor.sqc"
-      sql_setdlist[0].sqldata = (void*)&artid;
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
+      sql_setdlist[0].sqldata = (void*)&a_pubid;
+#line 126 "bibauthor.sqc"
       sql_setdlist[0].sqlind = 0L;
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
       sql_setdlist[1].sqltype = 460; sql_setdlist[1].sqllen = 26;
-#line 118 "bibauthor.sqc"
-      sql_setdlist[1].sqldata = (void*)atitle;
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
+      sql_setdlist[1].sqldata = (void*)a_title;
+#line 126 "bibauthor.sqc"
       sql_setdlist[1].sqlind = 0L;
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
       sql_setdlist[2].sqltype = 496; sql_setdlist[2].sqllen = 4;
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
       sql_setdlist[2].sqldata = (void*)&appears_in;
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
       sql_setdlist[2].sqlind = 0L;
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
       sql_setdlist[3].sqltype = 496; sql_setdlist[3].sqllen = 4;
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
       sql_setdlist[3].sqldata = (void*)&startpage;
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
       sql_setdlist[3].sqlind = 0L;
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
       sql_setdlist[4].sqltype = 496; sql_setdlist[4].sqllen = 4;
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
       sql_setdlist[4].sqldata = (void*)&endpage;
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
       sql_setdlist[4].sqlind = 0L;
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
       sqlasetdata(3,0,5,sql_setdlist,0L,0L);
     }
-#line 118 "bibauthor.sqc"
-  sqlacall((unsigned short)25,4,0,3,0L);
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
+  sqlacall((unsigned short)25,5,0,3,0L);
+#line 126 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
-    goto jorp;
+    goto j_or_p;
   }
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 118 "bibauthor.sqc"
+#line 126 "bibauthor.sqc"
 
-                printf("Pubid: %d\n", artid);
+                printf("Pubid: %d\n", a_pubid);
                 printf("Type: ARTICLE\n");
-                printf("Title: %s\n", atitle);
+                printf("Title: %s\n", a_title);
 
                 
 /*
 EXEC SQL DECLARE a_authors CURSOR FOR
                     SELECT name
                     FROM author, wrote
-                    WHERE :artid = publication
+                    WHERE :a_pubid = publication
                     AND aid = author
                     ORDER BY name;
 */
 
-#line 128 "bibauthor.sqc"
+#line 136 "bibauthor.sqc"
 
 
                 
@@ -642,47 +697,47 @@ EXEC SQL OPEN a_authors;
 */
 
 {
-#line 130 "bibauthor.sqc"
+#line 138 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 130 "bibauthor.sqc"
-  sqlaaloc(2,1,10,0L);
+#line 138 "bibauthor.sqc"
+  sqlaaloc(2,1,12,0L);
     {
       struct sqla_setdata_list sql_setdlist[1];
-#line 130 "bibauthor.sqc"
+#line 138 "bibauthor.sqc"
       sql_setdlist[0].sqltype = 496; sql_setdlist[0].sqllen = 4;
-#line 130 "bibauthor.sqc"
-      sql_setdlist[0].sqldata = (void*)&artid;
-#line 130 "bibauthor.sqc"
+#line 138 "bibauthor.sqc"
+      sql_setdlist[0].sqldata = (void*)&a_pubid;
+#line 138 "bibauthor.sqc"
       sql_setdlist[0].sqlind = 0L;
-#line 130 "bibauthor.sqc"
+#line 138 "bibauthor.sqc"
       sqlasetdata(2,0,1,sql_setdlist,0L,0L);
     }
-#line 130 "bibauthor.sqc"
-  sqlacall((unsigned short)26,5,2,0,0L);
-#line 130 "bibauthor.sqc"
+#line 138 "bibauthor.sqc"
+  sqlacall((unsigned short)26,6,2,0,0L);
+#line 138 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 130 "bibauthor.sqc"
+#line 138 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
-    goto jorp;
+    goto j_or_p;
   }
-#line 130 "bibauthor.sqc"
+#line 138 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 130 "bibauthor.sqc"
+#line 138 "bibauthor.sqc"
 
                 
 /*
 EXEC SQL WHENEVER NOT FOUND GO TO article;
 */
 
-#line 131 "bibauthor.sqc"
+#line 139 "bibauthor.sqc"
 
                 for ( ;; ) {
                     
@@ -691,40 +746,40 @@ EXEC SQL FETCH a_authors INTO :name;
 */
 
 {
-#line 133 "bibauthor.sqc"
+#line 141 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 133 "bibauthor.sqc"
-  sqlaaloc(3,1,11,0L);
+#line 141 "bibauthor.sqc"
+  sqlaaloc(3,1,13,0L);
     {
       struct sqla_setdata_list sql_setdlist[1];
-#line 133 "bibauthor.sqc"
+#line 141 "bibauthor.sqc"
       sql_setdlist[0].sqltype = 460; sql_setdlist[0].sqllen = 11;
-#line 133 "bibauthor.sqc"
+#line 141 "bibauthor.sqc"
       sql_setdlist[0].sqldata = (void*)name;
-#line 133 "bibauthor.sqc"
+#line 141 "bibauthor.sqc"
       sql_setdlist[0].sqlind = 0L;
-#line 133 "bibauthor.sqc"
+#line 141 "bibauthor.sqc"
       sqlasetdata(3,0,1,sql_setdlist,0L,0L);
     }
-#line 133 "bibauthor.sqc"
-  sqlacall((unsigned short)25,5,0,3,0L);
-#line 133 "bibauthor.sqc"
+#line 141 "bibauthor.sqc"
+  sqlacall((unsigned short)25,6,0,3,0L);
+#line 141 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 133 "bibauthor.sqc"
+#line 141 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto article;
   }
-#line 133 "bibauthor.sqc"
+#line 141 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 133 "bibauthor.sqc"
+#line 141 "bibauthor.sqc"
 
                     printf("Author: %s\n", name);
                 }
@@ -736,61 +791,62 @@ EXEC SQL CLOSE a_authors;
 */
 
 {
-#line 138 "bibauthor.sqc"
+#line 146 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 138 "bibauthor.sqc"
-  sqlacall((unsigned short)20,5,0,0,0L);
-#line 138 "bibauthor.sqc"
+#line 146 "bibauthor.sqc"
+  sqlacall((unsigned short)20,6,0,0,0L);
+#line 146 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 138 "bibauthor.sqc"
+#line 146 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto article;
   }
-#line 138 "bibauthor.sqc"
+#line 146 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 138 "bibauthor.sqc"
+#line 146 "bibauthor.sqc"
 
                 printf("In: %d\n", appears_in);
                 printf("Pages: %d--%d\n", startpage, endpage);
                 printf("\n");
             }
 
-jorp:
+j_or_p:
             
 /*
 EXEC SQL CLOSE articles;
 */
 
 {
-#line 145 "bibauthor.sqc"
+#line 153 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 145 "bibauthor.sqc"
-  sqlacall((unsigned short)20,4,0,0,0L);
-#line 145 "bibauthor.sqc"
+#line 153 "bibauthor.sqc"
+  sqlacall((unsigned short)20,5,0,0,0L);
+#line 153 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 145 "bibauthor.sqc"
+#line 153 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto article;
   }
-#line 145 "bibauthor.sqc"
+#line 153 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 145 "bibauthor.sqc"
+#line 153 "bibauthor.sqc"
+
 
             printf("Pubid: %d\n", pubid);
             printf("Type: %s\n", type);
@@ -805,59 +861,59 @@ EXEC SQL SELECT volume, number INTO :volume, :number
 */
 
 {
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 153 "bibauthor.sqc"
-  sqlaaloc(2,1,12,0L);
+#line 162 "bibauthor.sqc"
+  sqlaaloc(2,1,14,0L);
     {
       struct sqla_setdata_list sql_setdlist[1];
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
       sql_setdlist[0].sqltype = 496; sql_setdlist[0].sqllen = 4;
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
       sql_setdlist[0].sqldata = (void*)&pubid;
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
       sql_setdlist[0].sqlind = 0L;
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
       sqlasetdata(2,0,1,sql_setdlist,0L,0L);
     }
-#line 153 "bibauthor.sqc"
-  sqlaaloc(3,2,13,0L);
+#line 162 "bibauthor.sqc"
+  sqlaaloc(3,2,15,0L);
     {
       struct sqla_setdata_list sql_setdlist[2];
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
       sql_setdlist[0].sqltype = 496; sql_setdlist[0].sqllen = 4;
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
       sql_setdlist[0].sqldata = (void*)&volume;
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
       sql_setdlist[0].sqlind = 0L;
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
       sql_setdlist[1].sqltype = 496; sql_setdlist[1].sqllen = 4;
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
       sql_setdlist[1].sqldata = (void*)&number;
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
       sql_setdlist[1].sqlind = 0L;
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
       sqlasetdata(3,0,2,sql_setdlist,0L,0L);
     }
-#line 153 "bibauthor.sqc"
-  sqlacall((unsigned short)24,6,2,3,0L);
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
+  sqlacall((unsigned short)24,7,2,3,0L);
+#line 162 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto article;
   }
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 153 "bibauthor.sqc"
+#line 162 "bibauthor.sqc"
 
 
                 printf("Volume: %d\n", volume);
@@ -865,8 +921,6 @@ EXEC SQL SELECT volume, number INTO :volume, :number
             }
 
             printf("Year: %s\n", year);
-        } else {
-            // error
         }
 
         printf("\n");
@@ -879,27 +933,27 @@ EXEC SQL CLOSE publications;
 */
 
 {
-#line 168 "bibauthor.sqc"
+#line 175 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 168 "bibauthor.sqc"
-  sqlacall((unsigned short)20,1,0,0,0L);
-#line 168 "bibauthor.sqc"
+#line 175 "bibauthor.sqc"
+  sqlacall((unsigned short)20,2,0,0,0L);
+#line 175 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 168 "bibauthor.sqc"
+#line 175 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto article;
   }
-#line 168 "bibauthor.sqc"
+#line 175 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 168 "bibauthor.sqc"
+#line 175 "bibauthor.sqc"
 
 
     
@@ -908,27 +962,27 @@ EXEC SQL COMMIT;
 */
 
 {
-#line 170 "bibauthor.sqc"
+#line 177 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 170 "bibauthor.sqc"
+#line 177 "bibauthor.sqc"
   sqlacall((unsigned short)21,0,0,0,0L);
-#line 170 "bibauthor.sqc"
+#line 177 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 170 "bibauthor.sqc"
+#line 177 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto article;
   }
-#line 170 "bibauthor.sqc"
+#line 177 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 170 "bibauthor.sqc"
+#line 177 "bibauthor.sqc"
 
     
 /*
@@ -936,38 +990,38 @@ EXEC SQL CONNECT reset;
 */
 
 {
-#line 171 "bibauthor.sqc"
+#line 178 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 171 "bibauthor.sqc"
+#line 178 "bibauthor.sqc"
   sqlacall((unsigned short)29,3,0,0,0L);
-#line 171 "bibauthor.sqc"
+#line 178 "bibauthor.sqc"
   if (sqlca.sqlcode < 0)
   {
     sqlastop(0L);
     goto error;
   }
-#line 171 "bibauthor.sqc"
+#line 178 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto article;
   }
-#line 171 "bibauthor.sqc"
+#line 178 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 171 "bibauthor.sqc"
+#line 178 "bibauthor.sqc"
 
     exit(0);
 
 error:
-    check_error("My error", &sqlca);
+    printf("ERROR\n");
     
 /*
 EXEC SQL WHENEVER SQLERROR CONTINUE;
 */
 
-#line 176 "bibauthor.sqc"
+#line 183 "bibauthor.sqc"
 
 
     
@@ -976,21 +1030,21 @@ EXEC SQL ROLLBACK;
 */
 
 {
-#line 178 "bibauthor.sqc"
+#line 185 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 178 "bibauthor.sqc"
+#line 185 "bibauthor.sqc"
   sqlacall((unsigned short)28,0,0,0,0L);
-#line 178 "bibauthor.sqc"
+#line 185 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto article;
   }
-#line 178 "bibauthor.sqc"
+#line 185 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 178 "bibauthor.sqc"
+#line 185 "bibauthor.sqc"
 
     
 /*
@@ -998,21 +1052,21 @@ EXEC SQL CONNECT reset;
 */
 
 {
-#line 179 "bibauthor.sqc"
+#line 186 "bibauthor.sqc"
   sqlastrt(sqla_program_id, &sqla_rtinfo, &sqlca);
-#line 179 "bibauthor.sqc"
+#line 186 "bibauthor.sqc"
   sqlacall((unsigned short)29,3,0,0,0L);
-#line 179 "bibauthor.sqc"
+#line 186 "bibauthor.sqc"
   if (sqlca.sqlcode == 100)
   {
     sqlastop(0L);
     goto article;
   }
-#line 179 "bibauthor.sqc"
+#line 186 "bibauthor.sqc"
   sqlastop(0L);
 }
 
-#line 179 "bibauthor.sqc"
+#line 186 "bibauthor.sqc"
 
     exit(1);
 }
